@@ -1,33 +1,23 @@
 
 const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const { Configuration, OpenAIApi } = require('openai');
-require('dotenv').config();
-
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+// Middleware για να διαβάζει JSON
+app.use(express.json());
 
-app.post('/chat', async (req, res) => {
-  try {
-    const { message } = req.body;
-    const response = await openai.createChatCompletion({
-      model: "gpt-4",
-      messages: [{ role: "user", content: message }],
-    });
-    res.json({ reply: response.data.choices[0].message.content });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+// Αρχική σελίδα (GET /)
+app.get('/', (req, res) => {
+  res.send('🌬️ Καλώς ήρθες στην Ανέμωνα API!');
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+// Παράδειγμα POST endpoint (προαιρετικά)
+app.post('/chat', (req, res) => {
+  const message = req.body.message;
+  res.json({ reply: `Εσύ είπες: ${message}` });
+});
+
+// Εκκίνηση server
+const port = process.env.PORT || 10000;
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
